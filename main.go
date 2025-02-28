@@ -1,6 +1,6 @@
 package main
 
-import "tftl/cmd"
+import "github.com/tiulpin/tftl/cmd"
 
 func main() {
 	cmd.Execute()
