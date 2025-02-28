@@ -23,7 +23,7 @@ var rootCmd = &cobra.Command{
 
 		targetSet := make(map[string]struct{})
 		for _, filename := range files {
-			targets, err := parseTerraformFile(filename)
+			targets, err := ParseTerraformFile(filename)
 			if err != nil {
 				log.Printf("Failed parsing %s: %v\n", filename, err)
 				continue
@@ -59,15 +59,15 @@ func init() {
 	rootCmd.Flags().BoolVarP(&asString, "string", "s", false, "Output as -target=resource strings")
 }
 
-func parseTerraformFile(filename string) ([]string, error) {
+func ParseTerraformFile(filename string) ([]string, error) {
 	content, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 
 	file, diags := hclsyntax.ParseConfig(content, filename, hcl.InitialPos)
-	if diags.HasErrors() {
-		return nil, fmt.Errorf(diags.Error())
+	if diags != nil && diags.HasErrors() {
+		return nil, fmt.Errorf("error parsing file: %v", diags.Error())
 	}
 
 	syntaxBody, ok := file.Body.(*hclsyntax.Body)
